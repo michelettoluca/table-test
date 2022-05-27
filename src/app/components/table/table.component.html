@@ -1,0 +1,66 @@
+<div *ngIf="config.availableActions.includes(tableAction.ADD_ROW)">
+    <h4>Add</h4>
+    <form (ngSubmit)="handleAddRow()">
+        <input *ngFor="let header of config.headers; let i = index;"
+               type="text"
+               name="{{header.key}}"
+               [(ngModel)]="tmpRow[header.key]"
+               placeholder="{{header.label}}"/>
+
+        <input type="submit" value="Add">
+    </form>
+</div>
+
+<h4>Search</h4>
+<input *ngFor="let filter of config.filters; let i = index;"
+       type="text"
+       name="{{filter}}"
+       [(ngModel)]="filters[i].value"
+       placeholder="{{filter}}"
+       (input)="updateData()"/>
+
+<table>
+    <tr>
+        <th
+            *ngFor="let header of config.headers"
+            (click)="toggleOrder(header.key)"
+        >
+            {{ header.label }}
+            <ng-container *ngIf="config.order.column === header.key && config.order.type !== orderType.none">
+                {{ orderType[config.order.type] }}
+            </ng-container>
+        </th>
+    </tr>
+    <tr *ngFor="let row of displayedData | slice: currentPage * config.paginationConfig.itemsPerPage : (currentPage + 1) * config.paginationConfig.itemsPerPage">
+        <td *ngFor="let header of config.headers">
+            {{ row[header.key] }}
+        </td>
+        <td>
+            <button *ngIf="config.availableActions.includes(tableAction.DELETE_ROW)"
+                    (click)="handleDeleteRow(row)">
+                Delete
+            </button>
+            <button *ngIf="config.availableActions.includes(tableAction.EDIT_ROW)"
+                    (click)="handleEditRow(row)">
+                Edit
+            </button>
+        </td>
+    </tr>
+</table>
+<div>
+    <button (click)="selectPage(currentPage - 1)"
+            [disabled]="currentPage === 0 || pageIndexes.length <= 1">
+        Prev
+    </button>
+    |
+    <ng-container *ngFor="let pageIndex of pageIndexes;">
+        <button (click)="selectPage(pageIndex)">{{pageIndex + 1}}</button>
+        |
+    </ng-container>
+    <button (click)="selectPage(currentPage + 1)"
+            [disabled]="currentPage === pageIndexes.length - 1 || pageIndexes.length <= 1">
+        Next
+    </button>
+
+</div>
+<div>current page: {{currentPage + 1}}</div>
