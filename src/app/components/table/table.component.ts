@@ -12,12 +12,12 @@ export class TableComponent implements OnInit {
     @Output() eventEmitter = new EventEmitter<TableEvent>();
 
     displayedData!: TableData[];
-    filters!: TableFilter[];
+    filters: TableFilter[] = [];
 
     currentPage: number = 0;
     pageIndexes!: number[];
 
-    tmpRow: TableData = {};
+    newRow: TableData = {};
 
     public get orderType(): typeof OrderType {
         return OrderType;
@@ -28,10 +28,7 @@ export class TableComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.filters = this.config.filters.map((column) => ({
-            column,
-            value: ""
-        }))
+        // this.filters = this.config.filters.map((column) => ({ column, value: "" }))
 
         this.updateData()
     }
@@ -46,14 +43,16 @@ export class TableComponent implements OnInit {
 
     filterData() {
         this.displayedData = this.displayedData.filter((row) => {
-            let includeRow = true;
+            if (this.filters.length === 0) return true;
+
+            let includeRow = false;
 
             for (const filter of this.filters) {
                 if (row[filter.column]) {
                     const rowValue = row[filter.column].toLowerCase();
                     const filterValue = filter.value.toLowerCase();
 
-                    includeRow = includeRow && rowValue.includes(filterValue);
+                    includeRow = includeRow || rowValue.includes(filterValue);
                 }
             }
 
@@ -61,6 +60,23 @@ export class TableComponent implements OnInit {
         })
 
         this.currentPage = 0;
+    }
+
+    addFilter(column: string, value: string) {
+        const _value = value.trim();
+        if (_value && !this.filters.find(f => f.column === column && f.value === value)) {
+            this.filters.push({
+                column, value: _value
+            })
+        }
+
+        this.updateData();
+    }
+
+    removeFilter(filter: TableFilter) {
+        this.filters = this.filters.filter(f => !(f.column === filter.column && f.value === filter.value))
+
+        this.updateData();
     }
 
     nextOrderType(): OrderType {
@@ -107,31 +123,19 @@ export class TableComponent implements OnInit {
         this.currentPage = n;
     }
 
-    handleDeleteRow(row: TableData) {
-        this.eventEmitter.emit({
-            action: TableAction.DELETE_ROW,
-            payload: {
-                row
-            }
-        })
-    }
+    emit(action: TableAction, payload?: any) {
+        switch (action) {
+            case TableAction.ADD_ROW:
+                this.eventEmitter.emit({ action, payload: this.newRow })
 
-    handleEditRow(row: TableData) {
-        this.eventEmitter.emit({
-            action: TableAction.EDIT_ROW,
-            payload: {
-                row
-            }
-        })
-    }
+                this.newRow = {}
 
-    handleAddRow() {
-        this.eventEmitter.emit({
-            action: TableAction.ADD_ROW,
-            payload: {
-                row: this.tmpRow
-            }
-        })
+                break;
+
+            default:
+                this.eventEmitter.emit({ action, payload })
+        }
+
     }
 }
 

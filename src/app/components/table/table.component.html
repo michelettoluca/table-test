@@ -1,10 +1,10 @@
 <div *ngIf="config.availableActions.includes(tableAction.ADD_ROW)">
     <h4>Add</h4>
-    <form (ngSubmit)="handleAddRow()">
+    <form (submit)="emit(tableAction.ADD_ROW)">
         <input *ngFor="let header of config.headers; let i = index;"
                type="text"
                name="{{header.key}}"
-               [(ngModel)]="tmpRow[header.key]"
+               [(ngModel)]="newRow[header.key]"
                placeholder="{{header.label}}"/>
 
         <input type="submit" value="Add">
@@ -12,12 +12,23 @@
 </div>
 
 <h4>Search</h4>
-<input *ngFor="let filter of config.filters; let i = index;"
-       type="text"
-       name="{{filter}}"
-       [(ngModel)]="filters[i].value"
-       placeholder="{{filter}}"
-       (input)="updateData()"/>
+<form (submit)="addFilter(column.value, value.value)">
+    <input type="text" #value/>
+    <select #column>
+        <option *ngFor="let filter of config.filters; let i = index">
+            {{filter}}
+        </option>
+    </select>
+    <input type="submit" value="Add filter">
+</form>
+
+<ul>
+    <li *ngFor="let filter of filters">
+        <button (click)="removeFilter(filter)">Remove</button>
+        <i>{{filter.column}}:</i><b>{{filter.value}}</b>
+
+    </li>
+</ul>
 
 <table>
     <tr>
@@ -37,11 +48,11 @@
         </td>
         <td>
             <button *ngIf="config.availableActions.includes(tableAction.DELETE_ROW)"
-                    (click)="handleDeleteRow(row)">
+                    (click)="emit(tableAction.DELETE_ROW, row)">
                 Delete
             </button>
             <button *ngIf="config.availableActions.includes(tableAction.EDIT_ROW)"
-                    (click)="handleEditRow(row)">
+                    (click)="emit(tableAction.EDIT_ROW, row)">
                 Edit
             </button>
         </td>
