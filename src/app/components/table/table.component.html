@@ -1,15 +1,15 @@
-<div *ngIf="config.availableActions.includes(tableAction.ADD_ROW)">
-    <h4>Add</h4>
-    <form (submit)="emit(tableAction.ADD_ROW)">
-        <input *ngFor="let header of config.headers; let i = index;"
-               type="text"
-               name="{{header.key}}"
-               [(ngModel)]="newRow[header.key]"
-               placeholder="{{header.label}}"/>
+<!--<div *ngIf="config.actions.includes(tableAction.ADD_ROW)">-->
+<!--    <h4>Add</h4>-->
+<!--    <form (submit)="emit(tableAction.ADD_ROW)">-->
+<!--        <input *ngFor="let header of config.headers; let i = index;"-->
+<!--               type="text"-->
+<!--               name="{{header.key}}"-->
+<!--               [(ngModel)]="newRow[header.key]"-->
+<!--               placeholder="{{header.label}}"/>-->
 
-        <input type="submit" value="Add">
-    </form>
-</div>
+<!--        <input type="submit" value="Add">-->
+<!--    </form>-->
+<!--</div>-->
 
 <h4>Search</h4>
 <form (submit)="addFilter(column.value, value.value)">
@@ -26,7 +26,6 @@
     <li *ngFor="let filter of filters">
         <button (click)="removeFilter(filter)">Remove</button>
         <i>{{filter.column}}:</i><b>{{filter.value}}</b>
-
     </li>
 </ul>
 
@@ -46,14 +45,10 @@
         <td *ngFor="let header of config.headers">
             {{ row[header.key] }}
         </td>
-        <td>
-            <button *ngIf="config.availableActions.includes(tableAction.DELETE_ROW)"
-                    (click)="emit(tableAction.DELETE_ROW, row)">
-                Delete
-            </button>
-            <button *ngIf="config.availableActions.includes(tableAction.EDIT_ROW)"
-                    (click)="emit(tableAction.EDIT_ROW, row)">
-                Edit
+        <td *ngFor="let action of config.actions">
+            <button *ngIf="config.actions.includes(action)"
+                    (click)="emit(action, row)">
+                {{action.label}}
             </button>
         </td>
     </tr>
@@ -65,13 +60,12 @@
     </button>
     |
     <ng-container *ngFor="let pageIndex of pageIndexes;">
-        <button (click)="selectPage(pageIndex)">{{pageIndex + 1}}</button>
+        <button (click)="selectPage(pageIndex)"
+                [disabled]="currentPage===pageIndex">{{pageIndex + 1}}</button>
         |
     </ng-container>
     <button (click)="selectPage(currentPage + 1)"
             [disabled]="currentPage === pageIndexes.length - 1 || pageIndexes.length <= 1">
         Next
     </button>
-
 </div>
-<div>current page: {{currentPage + 1}}</div>

@@ -1,36 +1,40 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
-import { OrderType, TableAction, TableConfig, TableData, TableEvent, TableFilter } from "./table.types";
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from "@angular/core";
+import {
+    OrderType,
+    TableAction,
+    TableActionType,
+    TableConfig,
+    TableData,
+    TableEvent,
+    TableFilter
+} from "./table.types";
 
 @Component({
     selector: "app-table",
     templateUrl: "./table.component.html",
     styleUrls: ["./table.component.scss"],
 })
-export class TableComponent implements OnInit {
+export class TableComponent implements OnInit, OnChanges {
     @Input() config!: TableConfig;
-    @Input() data!: TableData[];
+    @Input() data!: any;
     @Output() eventEmitter = new EventEmitter<TableEvent>();
 
-    displayedData!: TableData[];
+    displayedData!: any[];
     filters: TableFilter[] = [];
 
     currentPage: number = 0;
     pageIndexes!: number[];
 
-    newRow: TableData = {};
-
     public get orderType(): typeof OrderType {
         return OrderType;
     }
 
-    public get tableAction(): typeof TableAction {
-        return TableAction;
+    ngOnInit(): void {
+        this.updateData();
     }
 
-    ngOnInit(): void {
-        // this.filters = this.config.filters.map((column) => ({ column, value: "" }))
-
-        this.updateData()
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes?.["data"].currentValue !== null) this.updateData();
     }
 
     updateData() {
@@ -42,7 +46,7 @@ export class TableComponent implements OnInit {
     }
 
     filterData() {
-        this.displayedData = this.displayedData.filter((row) => {
+        this.displayedData = this.displayedData?.filter((row) => {
             if (this.filters.length === 0) return true;
 
             let includeRow = false;
@@ -57,7 +61,7 @@ export class TableComponent implements OnInit {
             }
 
             return includeRow;
-        })
+        }) || [];
 
         this.currentPage = 0;
     }
@@ -124,18 +128,7 @@ export class TableComponent implements OnInit {
     }
 
     emit(action: TableAction, payload?: any) {
-        switch (action) {
-            case TableAction.ADD_ROW:
-                this.eventEmitter.emit({ action, payload: this.newRow })
-
-                this.newRow = {}
-
-                break;
-
-            default:
-                this.eventEmitter.emit({ action, payload })
-        }
-
+        this.eventEmitter.emit({ action, payload })
     }
 }
 

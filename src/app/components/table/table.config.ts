@@ -1,4 +1,4 @@
-import { OrderType, TableAction, TableConfig } from "./table.types";
+import { OrderType, TableActionType, TableConfig } from "./table.types";
 
 export const users: TableConfig = {
     headers: [
@@ -14,11 +14,11 @@ export const users: TableConfig = {
         "lastName"
     ],
     paginationConfig: {
-        itemsPerPage: 3
+        itemsPerPage: 4
     },
-    availableActions: [
-        TableAction.EDIT_ROW,
-        TableAction.DELETE_ROW,
-        TableAction.ADD_ROW
+    actions: [
+        // { type: TableActionType.ADD_ROW, label: "Add" },
+        { type: TableActionType.EDIT_ROW, label: "Edit" },
+        { type: TableActionType.DELETE_ROW, label: "Delete" }
     ]
 };

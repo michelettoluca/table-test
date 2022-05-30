@@ -3,7 +3,7 @@ export interface TableConfig {
     order: Order;
     filters: string[];
     paginationConfig: PaginationConfig;
-    availableActions: TableAction[];
+    actions: TableAction[];
 }
 
 export interface TableHeader {
@@ -41,9 +41,17 @@ export interface TableEvent {
     payload?: any;
 }
 
-export enum TableAction {
+export interface TableAction {
+    type: TableActionType,
+    label?: string
+}
+
+
+export enum TableActionType {
     ADD_ROW,
     EDIT_ROW,
     DELETE_ROW
 }
+
+
 
