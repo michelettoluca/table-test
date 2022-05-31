@@ -1,33 +1,33 @@
 <app-table [config]="usersTable" [data]="users$ | async" (eventEmitter)="handleEvent($event)"></app-table>
 <div>
-    <h4>Add</h4>
-    <form (submit)="addUser()">
-        <input type="text"
-               name="firstName"
-               placeholder="First name"
-               [(ngModel)]="tmpAddUser.firstName">
+   <h4>Add</h4>
+   <form (submit)="addUser()">
+      <input type="text"
+             name="firstName"
+             placeholder="First name"
+             [(ngModel)]="tmpAddUser.firstName">
 
-        <input type="text"
-               name="lastName"
-               placeholder="Last name"
-               [(ngModel)]="tmpAddUser.lastName">
+      <input type="text"
+             name="lastName"
+             placeholder="Last name"
+             [(ngModel)]="tmpAddUser.lastName">
 
-        <input type="submit" value="Add user">
-    </form>
+      <input type="submit" value="Add user">
+   </form>
 </div>
 <div *ngIf="tmpEditUser">
-    <h4>Edit</h4>
-    <form (submit)="editUser()">
-        <input type="text"
-               name="firstName"
-               placeholder="{{tmpEditUser.firstName}}"
-               [(ngModel)]="tmpEditUser.firstName">
+   <h4>Edit</h4>
+   <form (submit)="editUser()">
+      <input type="text"
+             name="firstName"
+             placeholder="{{tmpEditUser.firstName}}"
+             [(ngModel)]="tmpEditUser.firstName">
 
-        <input type="text"
-               name="lastName"
-               placeholder="{{tmpEditUser.lastName}}"
-               [(ngModel)]="tmpEditUser.lastName">
+      <input type="text"
+             name="lastName"
+             placeholder="{{tmpEditUser.lastName}}"
+             [(ngModel)]="tmpEditUser.lastName">
 
-        <input type="submit" value="Edit user">
-    </form>
+      <input type="submit" value="Edit user">
+   </form>
 </div>

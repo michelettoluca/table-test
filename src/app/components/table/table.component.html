@@ -1,71 +1,64 @@
-<!--<div *ngIf="config.actions.includes(tableAction.ADD_ROW)">-->
-<!--    <h4>Add</h4>-->
-<!--    <form (submit)="emit(tableAction.ADD_ROW)">-->
-<!--        <input *ngFor="let header of config.headers; let i = index;"-->
-<!--               type="text"-->
-<!--               name="{{header.key}}"-->
-<!--               [(ngModel)]="newRow[header.key]"-->
-<!--               placeholder="{{header.label}}"/>-->
-
-<!--        <input type="submit" value="Add">-->
-<!--    </form>-->
-<!--</div>-->
-
 <h4>Search</h4>
-<form (submit)="addFilter(column.value, value.value)">
-    <input type="text" #value/>
-    <select #column>
-        <option *ngFor="let filter of config.filters; let i = index">
-            {{filter}}
-        </option>
-    </select>
-    <input type="submit" value="Add filter">
+<form (submit)="addFilter(column.value, value.value); value.value=''">
+   <input type="text" #value/>
+   <select #column>
+      <option *ngFor="let filter of config.filters; let i = index">
+         {{filter}}
+      </option>
+   </select>
+   <input type="submit" value="Add filter">
 </form>
 
 <ul>
-    <li *ngFor="let filter of filters">
-        <button (click)="removeFilter(filter)">Remove</button>
-        <i>{{filter.column}}:</i><b>{{filter.value}}</b>
-    </li>
+   <li *ngFor="let filter of filters">
+      <button (click)="removeFilter(filter)">Remove</button>
+      <i>{{filter.column}}:</i><b>{{filter.value}}</b>
+   </li>
 </ul>
 
-<table>
-    <tr>
-        <th
+<ng-container *ngIf="(data
+        | tFilter: filters
+        | tSort: config.order.column : config.order.type) as r">
+   <table>
+      <tr>
+         <th
             *ngFor="let header of config.headers"
             (click)="toggleOrder(header.key)"
-        >
+         >
             {{ header.label }}
             <ng-container *ngIf="config.order.column === header.key && config.order.type !== orderType.none">
-                {{ orderType[config.order.type] }}
+               {{ orderType[config.order.type] }}
             </ng-container>
-        </th>
-    </tr>
-    <tr *ngFor="let row of displayedData | slice: currentPage * config.paginationConfig.itemsPerPage : (currentPage + 1) * config.paginationConfig.itemsPerPage">
-        <td *ngFor="let header of config.headers">
+         </th>
+      </tr>
+      <tr *ngFor="let row of r | tPagination: config.paginationConfig.itemsPerPage : currentPage">
+         <td *ngFor="let header of config.headers">
             {{ row[header.key] }}
-        </td>
-        <td *ngFor="let action of config.actions">
-            <button *ngIf="config.actions.includes(action)"
+         </td>
+         <td *ngFor="let action of config.actions">
+            <button *ngIf="action?.row && action.show(row)"
                     (click)="emit(action, row)">
-                {{action.label}}
+               {{action.label}}
             </button>
-        </td>
-    </tr>
-</table>
-<div>
-    <button (click)="selectPage(currentPage - 1)"
-            [disabled]="currentPage === 0 || pageIndexes.length <= 1">
-        Prev
-    </button>
-    |
-    <ng-container *ngFor="let pageIndex of pageIndexes;">
-        <button (click)="selectPage(pageIndex)"
-                [disabled]="currentPage===pageIndex">{{pageIndex + 1}}</button>
-        |
-    </ng-container>
-    <button (click)="selectPage(currentPage + 1)"
-            [disabled]="currentPage === pageIndexes.length - 1 || pageIndexes.length <= 1">
-        Next
-    </button>
-</div>
+         </td>
+      </tr>
+   </table>
+   <div>
+      <button (click)="selectPage(currentPage - 1)"
+              [disabled]="currentPage === 0 || pageIndexes.length <= 1">
+         Prev
+      </button>
+      |
+      <ng-container *ngFor=" let pageIndex of updatePageIndexes(r);">
+         <button (click)="selectPage(pageIndex)"
+                 [disabled]="currentPage===pageIndex">
+            {{pageIndex + 1}}
+         </button>
+         |
+      </ng-container>
+      <button (click)="selectPage(currentPage + 1)"
+              [disabled]="currentPage === pageIndexes.length - 1 || pageIndexes.length <= 1">
+         Next
+      </button>
+   </div>
+</ng-container>

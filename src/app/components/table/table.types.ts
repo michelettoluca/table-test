@@ -1,57 +1,55 @@
 export interface TableConfig {
-    headers: TableHeader[];
-    order: Order;
-    filters: string[];
-    paginationConfig: PaginationConfig;
-    actions: TableAction[];
+   headers: TableHeader[]
+   order: Order
+   filters: string[]
+   paginationConfig: PaginationConfig
+   actions: TableAction[]
 }
 
 export interface TableHeader {
-    key: string;
-    label: string;
+   key: string
+   label: string
 }
 
 export interface Order {
-    column: string;
-    type: OrderType;
+   column: string
+   type: OrderType
 }
 
 export enum OrderType {
-    asc = -1,
-    none = 0,
-    desc = 1,
+   asc = -1,
+   none = 0,
+   desc = 1
 }
 
 export interface TableFilter {
-    column: string;
-    value: string;
+   column: string
+   value: string
 }
 
 export interface TableData {
-    [key: string]: any;
+   [key: string]: any
 }
 
 export interface PaginationConfig {
-    itemsPerPage: number;
-    itemPerPageOptions?: number[];
+   itemsPerPage: number
+   itemPerPageOptions?: number[]
 }
 
 export interface TableEvent {
-    action: TableAction;
-    payload?: any;
+   action: TableAction
+   payload?: any
 }
 
 export interface TableAction {
-    type: TableActionType,
-    label?: string
+   type: TableActionType
+   label?: string
+   row?: boolean
+   show: (...arg: any[]) => boolean
 }
-
 
 export enum TableActionType {
-    ADD_ROW,
-    EDIT_ROW,
-    DELETE_ROW
+   ADD_ROW,
+   EDIT_ROW,
+   DELETE_ROW
 }
-
-
-

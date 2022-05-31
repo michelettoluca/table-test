@@ -6,70 +6,63 @@ import { UsersService } from "./services/users.service";
 import { TableActionType, TableEvent } from "./components/table/table.types";
 
 @Component({
-    selector: "app-root",
-    templateUrl: "./app.component.html",
-    styleUrls: ["./app.component.scss"],
+   selector: "app-root",
+   templateUrl: "./app.component.html",
+   styleUrls: ["./app.component.scss"],
 })
 export class AppComponent implements OnInit {
-    usersTable = tableConfig.users;
+   usersTable = tableConfig.users;
 
-    users$!: Observable<User[]>;
+   users$!: Observable<User[]>;
 
-    tmpEditUser: User | null = null;
-    tmpAddUser: User = { firstName: "", lastName: "" };
+   tmpEditUser: User | null = null;
+   tmpAddUser: User = { firstName: "", lastName: "" };
 
-    constructor(private usersService: UsersService) {
-    }
+   constructor(private usersService: UsersService) {
+   }
 
-    ngOnInit(): void {
-        this.users$ = this.usersService.findAll();
-    }
+   ngOnInit(): void {
+      this.updateData();
+   }
 
-    updateData() {
-        this.users$ = this.usersService.findAll();
-    }
+   updateData() {
+      this.users$ = this.usersService.findAll();
+   }
 
-    handleEvent(event: TableEvent) {
-        switch (event.action.type) {
-            // case TableActionType.ADD_ROW: {
-            //     const user: User = event.payload;
-            //
-            //     this.usersService.add(user).subscribe();
-            //     break;
-            // }
+   handleEvent(event: TableEvent) {
+      switch (event.action.type) {
+         case TableActionType.EDIT_ROW: {
+            this.tmpEditUser = event.payload;
 
-            case TableActionType.EDIT_ROW: {
-                this.tmpEditUser = event.payload;
+            break;
+         }
 
-                break;
-            }
+         case TableActionType.DELETE_ROW: {
+            const user: User = event.payload;
 
-            case TableActionType.DELETE_ROW: {
-                const user: User = event.payload;
+            this.usersService.delete(user.id!).subscribe();
+            break;
+         }
+      }
 
-                this.usersService.delete(user.id!).subscribe();
-                break;
-            }
-        }
+      this.updateData();
+   }
 
-        this.updateData();
-    }
+   addUser() {
+      this.usersService.add(this.tmpAddUser).subscribe({
+         next: () => {
+            this.tmpAddUser = { firstName: "", lastName: "" };
+            this.updateData();
+         }
+      });
+   }
 
-    addUser() {
-        this.usersService.add(this.tmpAddUser).subscribe({
-            next: () => {
-                this.tmpAddUser = { firstName: "", lastName: "" };
-                this.updateData();
-            }
-        });
-    }
-
-    editUser() {
-        this.usersService.edit(this.tmpEditUser!).subscribe({
-            next: () => {
-                this.tmpEditUser = null;
-                this.updateData();
-            }
-        });
-    }
+   editUser() {
+      this.usersService.edit(this.tmpEditUser!).subscribe({
+         next: () => {
+            this.tmpEditUser = null;
+            this.updateData();
+         }
+      });
+   }
 }

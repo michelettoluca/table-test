@@ -9,24 +9,32 @@ import { ButtonComponent } from "./components/button/button.component";
 import { TableComponent } from "./components/table/table.component";
 import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
+import { TFilter } from "./components/pipes/table-filter";
+import { TSort } from "./components/pipes/table-sort";
+import { TPagination } from "./components/pipes/table-pagination";
+import { TProps } from "./components/pipes/table-props";
 
 @NgModule({
-    declarations: [
-        AppComponent,
-        ButtonComponent,
-        TableComponent
-    ],
-    imports: [
-        HttpClientModule,
-        HttpClientInMemoryWebApiModule.forRoot(
-            InMemoryDataService, { dataEncapsulation: false }
-        ),
-        BrowserModule,
-        AppRoutingModule,
-        FormsModule,
-    ],
-    providers: [],
-    bootstrap: [AppComponent]
+   declarations: [
+      AppComponent,
+      ButtonComponent,
+      TableComponent,
+      TFilter,
+      TSort,
+      TPagination,
+      TProps,
+   ],
+   imports: [
+      HttpClientModule,
+      HttpClientInMemoryWebApiModule.forRoot(
+         InMemoryDataService, { dataEncapsulation: false }
+      ),
+      BrowserModule,
+      AppRoutingModule,
+      FormsModule,
+   ],
+   providers: [],
+   bootstrap: [AppComponent]
 })
 export class AppModule {
 }
